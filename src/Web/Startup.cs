@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -44,16 +41,25 @@ namespace Web
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Error/Default");
             }
-
+            
             app.UseStaticFiles();
+
+            app.UseStatusCodePagesWithReExecute("/Error/Status", "?status={0}");
 
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+            });
+
+            // Request not yet handled by pipeline
+            // Set 404 status to prevent the request from being processed by IIS
+            app.Use((ctx, next) => {
+                ctx.Response.StatusCode = 404;
+                return Task.FromResult(0);
             });
         }
     }
