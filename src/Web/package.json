@@ -1,0 +1,20 @@
+{
+    "name": "web",
+    "version": "0.0.1",
+    "description": "RequireJS + .NET Core Example",
+    "scripts": {
+        "postinstall": "bower install && bower-installer && typings install",
+        "build": "tsc -p . && node optimize.js",
+        "watch": "tsc -p . --sourceMap --inlineSources --watch"
+    },
+    "author": "Benjamin Fox",
+    "devDependencies": {
+        "almond": "^0.3.3",
+        "bower": "^1.7.9",
+        "bower-installer": "^1.2.0",
+        "requirejs": "^2.3.1",
+        "typescript": "^2.0.2",
+        "typings": "^1.3.3"
+    }
+}
+ 

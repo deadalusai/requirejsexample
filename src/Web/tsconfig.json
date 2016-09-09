@@ -1,0 +1,19 @@
+﻿{
+    "compilerOptions": {
+        "module": "amd",
+        "noImplicitAny": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": false,
+        "outDir": "./wwwroot/js/generated"
+    },
+    "include": [
+        "./typings/index.d.ts",
+        "./Scripts/**/*"
+    ],
+    "exclude": [
+        "./node_modules",
+        "./bower_components"
+    ]
+}
