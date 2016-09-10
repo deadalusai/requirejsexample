@@ -43,14 +43,14 @@ var entryPoints = entryFiles.map((f) => {
         console.error(`Expected path ${f} to be rooted in ${ROOT_PATH}`);
         process.exit(1);
     }
-    // Trim leading ROOT_PATH and trailing ".js", switch to web path seperators
+    // Trim leading ROOT_PATH and trailing ".ts", switch to web path seperators
     return f.substring(ROOT_PATH.length + 1, f.length - 3).replace(/\\/g, '/');
 });
 
 var config = {
     baseUrl: ROOT_PATH,
     include: entryPoints,
-    
+
     // Note: Almond provides a bare-bones AMD module loader for use with optimized requirejs modules
     // See: https://github.com/requirejs/almond
     name: rel('./node_modules/almond/almond.js'),
