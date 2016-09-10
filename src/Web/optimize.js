@@ -32,8 +32,8 @@ function walk(dir, pattern) {
 
 const ROOT_PATH = rel('./wwwroot/js/generated');
 
-// Scan for "index.js" files to determine page entry points
-var entryFiles = walk(rel('./wwwroot/js/generated/pages'), /^index\.js$/i);
+// Scan for "index.ts" files to determine page entry points
+var entryFiles = walk(rel('./Scripts/pages'), /^index\.ts$/i);
 
 // Convert file paths into './Scripts'-relative import paths
 // E.g. `C:\Path\To\Web\Scripts\pages\home\index.js` -> "pages/home/index"
