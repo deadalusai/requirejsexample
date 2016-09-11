@@ -29,8 +29,8 @@ function walk(dir, pattern) {
     return _files;
 }
 
-
-const ROOT_PATH = rel('./wwwroot/js/generated');
+const ROOT_TS_PATH = rel('./Scripts');
+const ROOT_JS_PATH = rel('./wwwroot/js/generated');
 
 // Scan for "index.ts" files to determine page entry points
 var entryFiles = walk(rel('./Scripts/pages'), /^index\.ts$/i);
@@ -38,17 +38,17 @@ var entryFiles = walk(rel('./Scripts/pages'), /^index\.ts$/i);
 // Convert file paths into './Scripts'-relative import paths
 // E.g. `C:\Path\To\Web\Scripts\pages\home\index.js` -> "pages/home/index"
 var entryPoints = entryFiles.map((f) => {
-    var idx = f.indexOf(ROOT_PATH);
+    var idx = f.indexOf(ROOT_TS_PATH);
     if (idx !== 0) {
-        console.error(`Expected path ${f} to be rooted in ${ROOT_PATH}`);
+        console.error(`Expected path ${f} to be rooted in ${ROOT_TS_PATH}`);
         process.exit(1);
     }
     // Trim leading ROOT_PATH and trailing ".ts", switch to web path seperators
-    return f.substring(ROOT_PATH.length + 1, f.length - 3).replace(/\\/g, '/');
+    return f.substring(ROOT_TS_PATH.length + 1, f.length - 3).replace(/\\/g, '/');
 });
 
 var config = {
-    baseUrl: ROOT_PATH,
+    baseUrl: ROOT_JS_PATH,
     include: entryPoints,
 
     // Note: Almond provides a bare-bones AMD module loader for use with optimized requirejs modules
