@@ -6,10 +6,8 @@ var require = {
         // Map library names to their physical location relative to baseUrl
         "jquery":    "../../lib/jquery/jquery",
         "bootstrap": "../../lib/bootstrap/bootstrap",
-
-        // Note: You may wish to switch to the non-min versions at dev time
-        "react":     "../../lib/react/react.min",
-        "react-dom": "../../lib/react/react-dom.min"
+        "react":     "../../lib/react/react",
+        "react-dom": "../../lib/react/react-dom"
     }
 };
 if (typeof exports === 'object') {

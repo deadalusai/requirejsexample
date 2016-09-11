@@ -1,7 +1,7 @@
 ﻿// Build script for combining and minifying generated requirejs scripts
-var path = require('path');
-var fs = require('fs');
-var process = require('process');
+const path = require('path');
+const fs = require('fs');
+const process = require('process');
 
 /** Given a file-relative path, returns an absolute path */
 function rel(p) {
@@ -33,6 +33,16 @@ function walk(dir, matcher) {
     }
 
     return _files;
+}
+
+/**
+ * Given two strings, determines if {a} ends with {b}
+ * @param a haystack
+ * @param b needle
+ */
+function endsWith(a, b) {
+    var idx = a.lastIndexOf(b);
+    return idx === (a.length - b.length);
 }
 
 const ROOT_TS_PATH = rel('./Scripts');
@@ -72,6 +82,8 @@ var config = {
     preserveLicenseComments: false
 };
 
+console.log('Loading configuration');
+
 // Copy in external config
 var extern = require(rel('./wwwroot/js/_require.config.js'));
 
@@ -83,7 +95,36 @@ Object.keys(extern.config).forEach(prop => {
     config[prop] = extern.config[prop];
 });
 
-console.log('Starting optimization step');
+// Hack - scan for and use minified versions of libraries where available.
+// This is to support libraries like React which ship with a .min version
+// intended for production use, which excludes debug messages.
+Object.keys(config.paths).forEach(mapping => {
+    var libpath = config.paths[mapping];
+    if (typeof libpath !== 'string') {
+        console.warn(`Skipping check of ${mapping} (expected string, found ${typeof libpath})`);
+        return;
+    }
+    var dir = path.dirname(libpath);
+    var base = path.basename(libpath);
+    var ext = path.extname(libpath);
+    if (ext === '.js') {
+        console.error(`.js extension should be omitted for ${mapping}`);
+        process.exit(1);
+    }
+    // Already using the min version?
+    if (ext !== '.min') {
+        // Does a min version exist on disk?
+        var newlibpath = path.join(dir, `${base}${ext}.min`);
+        if (fs.existsSync(path.join(ROOT_JS_PATH, `${newlibpath}.js`))) {
+            console.warn(`Using ${mapping} .min variation!`);
+            libpath = newlibpath;
+        }
+    }
+    console.log(`Using ${mapping}: ${libpath}`);
+    config.paths[mapping] = libpath;
+});
+
+console.log('Starting optimization');
 
 require('requirejs').optimize(
     config,
