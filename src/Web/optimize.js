@@ -8,8 +8,14 @@ function rel(p) {
     return path.resolve(__dirname, p);
 }
 
-/** Recursively walk the given path, finding files which match the given pattern */
-function walk(dir, pattern) {
+/**
+ * Recursively walks the given path and returns all files found.
+ * Optionally provide a `matcher` function to filter the files found based on the directory path or filename.
+ *
+ * @param dir string The directory to walk
+ * @param matcher ((subdir, file) => boolean) A function to match files to include (optional)
+ */
+function walk(dir, matcher) {
     var _files = [], _dirs = [dir];
 
     while (_dirs.length) {
@@ -20,7 +26,7 @@ function walk(dir, pattern) {
                 // Recurse into subdirectory
                 _dirs.push(fullpath);
             }
-            else if (pattern.test(file)) {
+            else if (!matcher || matcher(subdir, file)) {
                 _files.push(fullpath);
             }
         });
@@ -34,22 +40,25 @@ const ROOT_JS_PATH = rel('./wwwroot/js/generated');
 
 console.log('Scanning for app modules');
 
+const TS_FILE = /\.ts$/i;
+const TYPINGS_FILE = /\.d\.ts$/i;
+
 // Scan for ".ts" files to include all possible page entry points, then
 // convert file paths into ROOT_JS_PATH-relative import paths.
 // E.g. `C:\Path\To\Web\Scripts\pages\home\index.js` -> "pages/home/index"
-var entryPoints = walk(ROOT_TS_PATH, /(?!d\.)\.ts$/i).map(file => {
-    var idx = file.indexOf(ROOT_TS_PATH);
-    if (idx !== 0) {
-        console.error(`Expected path ${file} to be rooted in ${ROOT_TS_PATH}`);
-        process.exit(1);
-    }
-    // Trim leading ROOT_PATH and trailing ".ts", switch to web path seperators
-    var importpath = file.substring(ROOT_TS_PATH.length + 1, file.length - 3).replace(/\\/g, '/');
-
-    console.log(`Found '${importpath}'`)
-
-    return importpath;
-});
+var entryPoints =
+    walk(ROOT_TS_PATH, (subdir, file) => TS_FILE.test(file) && !TYPINGS_FILE.test(file))
+        .map(path => {
+            var idx = path.indexOf(ROOT_TS_PATH);
+            if (idx !== 0) {
+                console.error(`Expected path ${path} to be rooted in ${ROOT_TS_PATH}`);
+                process.exit(1);
+            }
+            // Trim leading ROOT_TS_PATH and trailing ".ts", switch to web path seperators
+            var importpath = path.substring(ROOT_TS_PATH.length + 1, path.length - 3).replace(/\\/g, '/');
+            console.log(`Found '${importpath}'`)
+            return importpath;
+        });
 
 var config = {
     baseUrl: ROOT_JS_PATH,
