@@ -40,7 +40,7 @@ const ROOT_JS_PATH = rel('./wwwroot/js/generated');
 
 console.log('Scanning for app modules');
 
-const TS_FILE = /\.ts$/i;
+const TS_FILE = /\.tsx?$/i;
 const TYPINGS_FILE = /\.d\.ts$/i;
 
 // Scan for ".ts" files to include all possible page entry points, then
@@ -48,14 +48,14 @@ const TYPINGS_FILE = /\.d\.ts$/i;
 // E.g. `C:\Path\To\Web\Scripts\pages\home\index.js` -> "pages/home/index"
 var entryPoints =
     walk(ROOT_TS_PATH, (subdir, file) => TS_FILE.test(file) && !TYPINGS_FILE.test(file))
-        .map(path => {
-            var idx = path.indexOf(ROOT_TS_PATH);
+        .map(file => {
+            var idx = file.indexOf(ROOT_TS_PATH);
             if (idx !== 0) {
-                console.error(`Expected path ${path} to be rooted in ${ROOT_TS_PATH}`);
+                console.error(`Expected path ${file} to be rooted in ${ROOT_TS_PATH}`);
                 process.exit(1);
             }
-            // Trim leading ROOT_TS_PATH and trailing ".ts", switch to web path seperators
-            var importpath = path.substring(ROOT_TS_PATH.length + 1, path.length - 3).replace(/\\/g, '/');
+            // Trim leading ROOT_TS_PATH and extension, switch to web path seperators
+            var importpath = file.substring(ROOT_TS_PATH.length + 1, file.length - path.extname(file).length).replace(/\\/g, '/');
             console.log(`Found '${importpath}'`)
             return importpath;
         });
@@ -67,7 +67,9 @@ var config = {
     // Note: Almond provides a bare-bones AMD module loader for use with optimized requirejs modules
     // See: https://github.com/requirejs/almond
     name: rel('./node_modules/almond/almond.js'),
-    out: rel('./wwwroot/js/generated/main-built.js')
+    out: rel('./wwwroot/js/generated/main-built.js'),
+    // Note: License comments making up a significant portion of the generated file's bytecount
+    preserveLicenseComments: false
 };
 
 // Copy in external config

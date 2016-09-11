@@ -6,6 +6,7 @@
         "noImplicitThis": true,
         "noUnusedLocals": true,
         "noUnusedParameters": false,
+        "jsx": "react",
         "outDir": "./wwwroot/js/generated"
     },
     "include": [
