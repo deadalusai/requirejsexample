@@ -57,7 +57,7 @@ Bower Configuration
 -------------------
 
 Library dependencies are automatically copied from `bower_components` into
-the `wwwroot/libs/` directory using the [bower-installer][installer] tool.
+the `wwwroot/libs/` directory using the [bower-installer][installer] utility.
 
 Configuration for `bower-installer` is in the `install` section of `bower.json`.
 
@@ -86,7 +86,8 @@ For example, given the following TypeScript modules and their dependencies:
 - `util`
 - `init`
 - `pages/home/index`
-    - `jquery` (library)
+    - `react` (library)
+    - `react-dom` (library)
     - `util`
     - `init`
 - `pages/about/index`
@@ -95,11 +96,20 @@ For example, given the following TypeScript modules and their dependencies:
 The optimized script will include the following:
 
 - `almond` (minimal AMD loader)
-- `jquery` (library)
+- `react` (library)
+- `react-dom` (library)
 - `init`
 - `util`
 - `pages/home/index`
 - `pages/about/index`
+
+`optimize.js` will also automatically check for and try to use `.min`
+versions of library files. This is to support libraries like React
+which ship with `.min` versions specifically prepared for production
+use, which omit additional dev-time log messages, etc.
+
+You must remember to configure `bower-installer` to include `.min`
+file versions!
 
 
 Refrencing a script from a View
