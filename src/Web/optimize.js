@@ -32,19 +32,23 @@ function walk(dir, pattern) {
 const ROOT_TS_PATH = rel('./Scripts');
 const ROOT_JS_PATH = rel('./wwwroot/js/generated');
 
-// Scan for "index.ts" files to determine page entry points
-var entryFiles = walk(rel('./Scripts/pages'), /^index\.ts$/i);
+console.log('Scanning for app modules');
 
-// Convert file paths into './Scripts'-relative import paths
+// Scan for ".ts" files to include all possible page entry points, then
+// convert file paths into ROOT_JS_PATH-relative import paths.
 // E.g. `C:\Path\To\Web\Scripts\pages\home\index.js` -> "pages/home/index"
-var entryPoints = entryFiles.map((f) => {
-    var idx = f.indexOf(ROOT_TS_PATH);
+var entryPoints = walk(ROOT_TS_PATH, /(?!d\.)\.ts$/i).map(file => {
+    var idx = file.indexOf(ROOT_TS_PATH);
     if (idx !== 0) {
-        console.error(`Expected path ${f} to be rooted in ${ROOT_TS_PATH}`);
+        console.error(`Expected path ${file} to be rooted in ${ROOT_TS_PATH}`);
         process.exit(1);
     }
     // Trim leading ROOT_PATH and trailing ".ts", switch to web path seperators
-    return f.substring(ROOT_TS_PATH.length + 1, f.length - 3).replace(/\\/g, '/');
+    var importpath = file.substring(ROOT_TS_PATH.length + 1, file.length - 3).replace(/\\/g, '/');
+
+    console.log(`Found '${importpath}'`)
+
+    return importpath;
 });
 
 var config = {
@@ -68,7 +72,7 @@ Object.keys(extern.config).forEach(prop => {
     config[prop] = extern.config[prop];
 });
 
-//console.log(config);
+console.log('Starting optimization step');
 
 require('requirejs').optimize(
     config,

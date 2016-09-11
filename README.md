@@ -46,9 +46,11 @@ See `tsconfig.json` for the TypeScript configuration.
    - Your application code
    - The [almond.js][almond] minimal AMD module loader
 
-See `Views/Shared/_Layout.cshtml` to see how these scripts are included.
+   See **optimize.js** section below for further explanation.
+
+Take a look at `Views/Shared/_Layout.cshtml` to see how these scripts are included.
 In this project we are using the new Razor `environment` tag helper, but you can
-achieve the same effect in older versions of Razor with an `@if(Debug)` statment.
+achieve the same effect in older versions of Razor with an `@if (Debug)` statment.
 
 
 Bower Configuration
@@ -75,20 +77,20 @@ optimize.js
 -----------
 
 This Node script configures and invokes the RequireJS Optimizer tool. It works by
-scanning for `index.ts` files within the `Scripts/pages/` directory and including
+scanning for all `.ts` files within the `Scripts/` directory and including
 those files in the optimized script. Any dependencies those files have are also
 included, without duplication.
 
-For example, given the following entrypoints and their dependencies:
+For example, given the following TypeScript modules and their dependencies:
 
-```
-pages/home/index
-    -> jquery (library)
-    -> util
-    -> init
-pages/about/index
-    -> init
-```
+- `util`
+- `init`
+- `pages/home/index`
+    - `jquery` (library)
+    - `util`
+    - `init`
+- `pages/about/index`
+    - `init`
 
 The optimized script will include the following:
 
