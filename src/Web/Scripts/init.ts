@@ -2,7 +2,10 @@
 console.log('Loading init');
 
 const _handlers: (() => void)[] = [];
+var _ready = false;
+
 function completed() {
+    _ready = true;
     document.removeEventListener('DOMContentLoaded', completed);
     window.removeEventListener('load', completed);
     while (_handlers.length) {
@@ -19,7 +22,7 @@ export function onready(handler: () => void) {
     console.log('onready');
 
     // Defer execution while the document is loading
-    if (document.readyState !== 'loading') {
+    if (_ready) {
         handler();
     }
     else {
