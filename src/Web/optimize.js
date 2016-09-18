@@ -105,16 +105,15 @@ Object.keys(config.paths).forEach(mapping => {
         return;
     }
     var dir = path.dirname(libpath);
-    var base = path.basename(libpath);
-    var ext = path.extname(libpath);
-    if (ext === '.js') {
+    var libname = path.basename(libpath);
+    if (endsWith(libname, '.js')) {
         console.error(`.js extension should be omitted for ${mapping}`);
         process.exit(1);
     }
-    // Already using the min version?
-    if (ext !== '.min') {
+    // Not already using the min version?
+    if (!endsWith(libname, '.min')) {
         // Does a min version exist on disk?
-        var newlibpath = path.join(dir, `${base}${ext}.min`);
+        var newlibpath = path.join(dir, `${libname}.min`);
         if (fs.existsSync(path.join(ROOT_JS_PATH, `${newlibpath}.js`))) {
             console.warn(`Using ${mapping} .min variation!`);
             libpath = newlibpath;
