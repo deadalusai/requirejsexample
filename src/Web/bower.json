@@ -5,7 +5,8 @@
         "bootstrap": "3.3.6",
         "jquery": "2.2.0",
         "requirejs": "^2.3.1",
-        "react": "^15.3.1"
+        "react": "^15.3.1",
+        "es6-promise": "^4.0.5"
     },
     "install": {
         "//": "See: https://github.com/blittle/bower-installer",
