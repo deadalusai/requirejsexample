@@ -7,7 +7,9 @@ var require = {
         "jquery":    "../../lib/jquery/jquery",
         "bootstrap": "../../lib/bootstrap/bootstrap",
         "react":     "../../lib/react/react",
-        "react-dom": "../../lib/react/react-dom"
+        "react-dom": "../../lib/react/react-dom",
+        // Typescript support library
+        "tslib":     "../../lib/tslib/tslib"
     }
 };
 if (typeof exports === 'object') {

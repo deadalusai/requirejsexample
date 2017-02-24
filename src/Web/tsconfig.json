@@ -4,8 +4,9 @@
         "noImplicitAny": true,
         "noFallthroughCasesInSwitch": true,
         "noImplicitThis": true,
-        "noUnusedLocals": true,
+        "noUnusedLocals": false,
         "noUnusedParameters": false,
+        "importHelpers": true,
         "jsx": "react",
         "outDir": "./wwwroot/js/generated",
         "lib": [
@@ -16,7 +17,8 @@
     },
     "include": [
         "./Scripts/**/*",
-        "./node_modules/@types/**/*"
+        "./node_modules/@types/**/*",
+        "./custom_types/**/*"
     ],
     "exclude": [
         "./node_modules",

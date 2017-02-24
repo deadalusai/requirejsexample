@@ -1,5 +1,4 @@
-﻿
-console.log('Loading util');
+﻿console.log('Loading util');
 
 export function foo() {
 
