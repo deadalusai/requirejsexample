@@ -10,8 +10,8 @@
         "outDir": "./wwwroot/js/generated"
     },
     "include": [
-        "./typings/index.d.ts",
-        "./Scripts/**/*"
+        "./Scripts/**/*",
+        "./node_modules/@types/**/*"
     ],
     "exclude": [
         "./node_modules",
