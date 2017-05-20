@@ -14,8 +14,14 @@ function completed() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', completed);
-window.addEventListener('load', completed);
+// Document already ready?
+if (document.readyState === 'complete') {
+    _ready = true;
+}
+else {
+    document.addEventListener('DOMContentLoaded', completed);
+    window.addEventListener('load', completed);
+}
 
 export function onready(handler: () => void) {
 
