@@ -1,23 +1,24 @@
 {
-    "name": "asp.net",
-    "private": true,
-    "dependencies": {
-        "bootstrap": "3.3.6",
-        "jquery": "2.2.0",
-        "requirejs": "^2.3.1",
-        "react": "^15.3.1",
-        "es6-promise": "^4.0.5"
-    },
-    "install": {
-        "//": "See: https://github.com/blittle/bower-installer",
-        "path": "./wwwroot/lib",
-        "sources": {
-            "bootstrap": [
-                "./bower_components/bootstrap/dist/**"
-            ],
-            "react": [
-                "./bower_components/react/react*.js"
-            ]
-        }
+  "name": "asp.net",
+  "private": true,
+  "dependencies": {
+    "bootstrap": "3.3.6",
+    "jquery": "2.2.0",
+    "requirejs": "^2.3.1",
+    "react": "^15.3.1",
+    "es6-promise": "^4.0.5",
+    "tslib": "^1.7.1"
+  },
+  "install": {
+    "//": "See: https://github.com/blittle/bower-installer",
+    "path": "./wwwroot/lib",
+    "sources": {
+      "bootstrap": [
+        "./bower_components/bootstrap/dist/**"
+      ],
+      "react": [
+        "./bower_components/react/react*.js"
+      ]
     }
+  }
 }
