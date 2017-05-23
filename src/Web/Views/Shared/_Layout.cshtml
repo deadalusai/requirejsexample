@@ -39,17 +39,20 @@
     
     <environment names="Development">
         @*
-            DEV: RequireJS loads scripts dynamically
+            DEV: SystemJS loads scripts dynamically
         *@
-        <script src="~/js/_require.config.js"></script>
-        <script>require.baseUrl = '@Url.Content("~/js/generated/")';</script>
-        <script src="~/lib/requirejs/require.js"></script>
+        <script src="~/lib/system.js/system.js"></script>
+        <script src="~/js/_systemjs.config.js"></script>
+        <script>
+            System.config(createSystemJsConfig('@Url.Content("~/js/generated/")'));
+        </script>
     </environment>
     <environment names="Staging,Production">
         @*
-            PROD: Load optimized requirejs bundle (includes minimal AMD loader almond.js)
+            PROD: Load optimized systemjs bundle
         *@
-        <script src="~/js/generated/main-built.js" asp-append-version="true"></script>
+        <script src="~/lib/system.js/system-production.js"></script>
+        <script src="~/main-built.js" asp-append-version="true"></script>
     </environment>
 
     @RenderSection("scripts", required: false)

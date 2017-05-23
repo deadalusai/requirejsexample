@@ -4,7 +4,7 @@
 
 @section scripts {
     <script>
-        require(['pages/home/index'], function (home) {
+        System.import('pages/home/index').then(function (home) {
             home.init('#host');
         });
     </script>

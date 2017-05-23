@@ -1,6 +1,7 @@
 ﻿{
     "compilerOptions": {
-        "module": "amd",
+        "target": "es5",
+        "module": "commonjs",
         "noImplicitAny": true,
         "noFallthroughCasesInSwitch": true,
         "noImplicitThis": true,
@@ -8,6 +9,7 @@
         "noUnusedParameters": false,
         "importHelpers": true,
         "jsx": "react",
+        "baseUrl": "./Scripts",
         "outDir": "./wwwroot/js/generated",
         "lib": [
             "dom",
