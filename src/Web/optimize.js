@@ -82,25 +82,33 @@ var builder = new Builder('./wwwroot/js', './wwwroot/_jspm.config.js');
 
 // Trace the entrypoints individually and then patch their names so
 // that we can load them from the web page
-Promise.all(entryPoints.map(file => builder.trace(file)))
+Promise.all(entryPoints.map(moduleName => builder.trace(moduleName)))
     // Collapse all modules into a single tree
     .then(trees => trees.reduce((left, right) => builder.addTrees(left, right)))
-    // HACK HACK: Re-write module names to remove .js extension added by trace.
+    // Re-write app module names to remove .js extension added by trace.
     .then(tree => {
-        var newTree = {};
-        Object.keys(tree).forEach(name => {
-            var mod = tree[name];
-            // Only patch packages from our build
-            if (mod.path.indexOf('jspm_packages') === 0) {
-                newTree[name] = mod;
-                return;
+        /* 
+            When the SystemJS-Builder trace function locates our modules
+            it appends '.js' to the module name (as that is the name of the file on disk).
+
+            We need to trim this extension from the module names so that we can load the modules
+            directly using `System.import('module/name')` in the browser, as it works in Dev mode.
+
+            TODO: Can we use _jspm.config.js to make this mapping explicit?
+            Not sure how to do so without require ALL loose app modules to be added to the config
+            explicitly.
+        */
+        entryPoints.forEach(moduleName => {
+            var jsModuleName = `${moduleName}.js`;
+            console.log(`Patching module name: ${jsModuleName} -> ${moduleName}`);
+            var mod = tree[jsModuleName];
+            if (!mod) {
+                throw new Error(`Unable to find expected module name ${jsModuleName} in module tree!`);
             }
-            var newName = trimExtension(mod.name);
-            console.log(`Patching module name: ${name} -> ${newName}`);
-            mod.name = newName;
-            newTree[newName] = mod;
+            // Rename the module in the tree
+            mod.name = moduleName;
         });
-        return newTree;
+        return tree;
     })
     // And bundle into a single file
     // TODO: Split into app, dependencies files?
