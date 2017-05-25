@@ -36,7 +36,6 @@
       "@angular/core": "npm:@angular/core@^4.1.3",
       "@angular/platform-browser": "npm:@angular/platform-browser@^4.1.3",
       "@angular/platform-browser-dynamic": "npm:@angular/platform-browser-dynamic@^4.1.3",
-      "angular-core": "npm:@angular/core@^4.1.3",
       "bootstrap": "github:twbs/bootstrap@3.3.6",
       "es6-promise": "npm:es6-promise@^4.1.0",
       "es6-shim": "github:es-shims/es6-shim@^0.35.3",

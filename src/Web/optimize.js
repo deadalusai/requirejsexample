@@ -104,7 +104,13 @@ Promise.all(entryPoints.map(file => builder.trace(file)))
     })
     // And bundle into a single file
     // TODO: Split into app, dependencies files?
-    .then(tree => builder.bundle(tree, './wwwroot/js/_main.js'))
+    .then(tree => {
+        var outputFile = './wwwroot/js/_main.js';
+        var config = {
+            minify: true
+        };
+        return builder.bundle(tree, outputFile, config);
+    })
     .then(result => {
         console.log('Build complete.');
     })
