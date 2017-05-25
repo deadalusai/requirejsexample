@@ -35,24 +35,20 @@
     @* 
         Polyfills
     *@
-    <script src="~/lib/es6-promise/es6-promise.js"></script>
-    
     <environment names="Development">
         @*
             DEV: SystemJS loads scripts dynamically
         *@
-        <script src="~/lib/system.js/system.js"></script>
-        <script src="~/js/_systemjs.config.js"></script>
-        <script>
-            System.config(createSystemJsConfig('@Url.Content("~/js/generated/")'));
-        </script>
+        <script src="~/js/jspm_packages/system.js"></script>
+        <script src="~/_jspm.config.js"></script>
     </environment>
     <environment names="Staging,Production">
         @*
             PROD: Load optimized systemjs bundle
         *@
-        <script src="~/lib/system.js/system-production.js"></script>
-        <script src="~/js/built/main.js" asp-append-version="true"></script>
+        <script src="~/js/jspm_packages/system.js"></script>
+        <script src="~/_jspm.config.js"></script>
+        <script src="~/js/_main.js" asp-append-version="true"></script>
     </environment>
 
     @RenderSection("scripts", required: false)

@@ -10,7 +10,7 @@
         "importHelpers": true,
         "jsx": "react",
         "baseUrl": "./Scripts",
-        "outDir": "./wwwroot/js/generated",
+        "outDir": "./wwwroot/js",
         "lib": [
             "dom",
             "es5",
@@ -23,9 +23,5 @@
     "include": [
         "./Scripts/**/*",
         "./custom_types/**/*"
-    ],
-    "exclude": [
-        "./node_modules",
-        "./bower_components"
     ]
 }
