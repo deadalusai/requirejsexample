@@ -2,7 +2,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-console.log('Loading home/index');
+console.log('Loading react/index');
 
 
 export interface HelloProps { compiler: string; framework: string; }

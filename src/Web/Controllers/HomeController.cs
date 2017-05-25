@@ -9,9 +9,14 @@ namespace Web.Controllers
             return View();
         }
 
-        public IActionResult About()
+        public IActionResult React()
         {
             return View();
+        }
+
+        public IActionResult Angular2()
+        {
+            return View();   
         }
     }
 }
