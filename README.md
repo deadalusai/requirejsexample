@@ -1,7 +1,7 @@
-RequireJS + ASP.NET Core Example
+SystemJS + ASP.NET Core Example
 ================================
 
-Experiment project configuration using TypeScript + RequireJS for
+Experiment project configuration using TypeScript + SystemJS + JSPM for
 modular scripting with multiple (e.g. per-page) entry points.
 
 
@@ -11,8 +11,9 @@ Debugging
 1. Install [NodeJS + npm][nodejs] and the [.NET Core SDK][dotnet]
 1. Change to the `src\Web` directory
 1. Run `dotnet restore` to restore .NET Core depencencies
+1. Set the `ASPNETCORE_ENVIRONMENT` environment variable to `Development` to run the app in development mode
 1. Run `dotnet run` to start the .NET Core debug web server
-1. Run `npm install` to restore NPM, bower and typings dependencies
+1. Run `npm install` to restore NPM, JSPM and @types dependencies
 1. Run `npm run watch` to start the debug typescript compile, which automatically
    watches for changes
 
@@ -26,6 +27,9 @@ Packaging
 Run `dotnet package`. This is configured to also invoke `npm run build`, which
 generates an optimized 'release' build of your TypeScript code.
 
+Run `dotnet run` with `ASPNETCORE_ENVIRONMENT` set to `Production` to run with the app
+in "production" mode.
+
 
 Application Layout
 ------------------
@@ -36,7 +40,7 @@ directory.
 All scripts are compiled for use with an AMD module loader.
 See `tsconfig.json` for the TypeScript configuration.
 
-1. In a `Development` release, scripts are loaded dynamically using RequireJS. This
+1. In a `Development` release, scripts are loaded dynamically using SystemJS. This
    includes library dependencies.
 
 1. In a `Production` release, an additional optimization step generates a single
@@ -44,7 +48,8 @@ See `tsconfig.json` for the TypeScript configuration.
 
    - Any library dependencies
    - Your application code
-   - The [almond.js][almond] minimal AMD module loader
+
+   The SystemJS loader is still required to load this application bundle.
 
    See **optimize.js** section below for further explanation.
 
@@ -53,33 +58,25 @@ In this project we are using the new Razor `environment` tag helper, but you can
 achieve the same effect in older versions of Razor with an `@if (Debug)` statment.
 
 
-Bower Configuration
--------------------
-
-Library dependencies are automatically copied from `bower_components` into
-the `wwwroot/libs/` directory using the [bower-installer][installer] utility.
-
-Configuration for `bower-installer` is in the `install` section of `bower.json`.
-
-
-RequireJS Configuration
+SystemJS Configuration
 -----------------------
 
-See `wwwroot/js/_require.config.js` for the RequireJS configuration. All
-libraries must be mapped to their physical location in the `wwwroot/libs/` directory
-in this file.
+See `wwwroot/js/_jspm.config.js` for the SystemJS configuration. This file contains
+some custom configuration, but is maintained by the `jspm` command-line tool. All
+libraries are be mapped to their physical location in the `wwwroot/js/jspm_packages`
+directory in this file.
 
-This single file is used by RequireJS to dynamically locate dependencies at dev
+This single file is used by SystemJS to dynamically locate dependencies at dev
 time, and by the `optimize.js` script at build time to generate the optimized build.
 
 
 optimize.js
 -----------
 
-This Node script configures and invokes the RequireJS Optimizer tool. It works by
+This Node script configures and invokes the `systemjs-builder` tool. It works by
 scanning for all `.ts` files within the `Scripts/` directory and including
 those files in the optimized script. Any dependencies those files have are also
-included, without duplication.
+included automatically.
 
 For example, given the following TypeScript modules and their dependencies:
 
@@ -95,7 +92,6 @@ For example, given the following TypeScript modules and their dependencies:
 
 The optimized script will include the following:
 
-- `almond` (minimal AMD loader)
 - `react` (library)
 - `react-dom` (library)
 - `init`
@@ -103,23 +99,15 @@ The optimized script will include the following:
 - `pages/home/index`
 - `pages/about/index`
 
-`optimize.js` will also automatically check for and try to use `.min`
-versions of library files. This is to support libraries like React
-which ship with `.min` versions specifically prepared for production
-use, which omit additional dev-time log messages, etc.
-
-You must remember to configure `bower-installer` to include `.min`
-file versions!
-
 
 Refrencing a script from a View
 -------------------------------
 
-Add a `require` call to any page/view in order to load and run a script:
+Add a `System.import` call to any page/view in order to load and run a script:
 
 ```html
 @section scripts {
-    <script>require(['pages/home/index'])</script>
+    <script>System.import('pages/home/index')</script>
 }
 ```
 
@@ -141,14 +129,9 @@ export function init(name: string) {
 <!-- Views/Home/About.cshtml -->
 @section scripts {
     <script>
-        require(['pages/about/index'], function (about) {
+        System.import('pages/about/index').then(function (about) {
             about.init('@Model.Name');
         });
     </script>
 }
 ```
-
-
-[almond]: https://github.com/requirejs/almond
-[installer]: https://github.com/blittle/bower-installer
-
