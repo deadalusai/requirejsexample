@@ -1,7 +1,5 @@
 # Exclude automatically maintained directories
 wwwroot/js/
-wwwroot/generated/
-wwwroot/lib/
 
 # Exclude package manager directories
 node_modules/
