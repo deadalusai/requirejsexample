@@ -60,9 +60,9 @@ const TYPINGS_FILE = /\.d\.ts$/i;
 
 const ROOT_TS_PATH = rel('./Scripts');
 
-// Scan for ".ts" files to include all possible page entry points, then
-// convert file paths into root-relative import paths.
-// E.g. `C:\Path\To\Web\Scripts\pages\home\index.js` -> "pages/home/index"
+// Scan for ".ts" files in the ./Scripts directory to find all possible page entry points,
+// then convert file paths into root-relative import paths.
+// E.g. `C:\Path\To\Web\Scripts\pages\home\index.tsx` -> "pages/home/index"
 var entryPoints =
     walk(ROOT_TS_PATH, (subdir, file) => TS_FILE.test(file) && !TYPINGS_FILE.test(file))
         .map(file => {
@@ -70,7 +70,7 @@ var entryPoints =
             if (idx !== 0) {
                 throw new Error(`Expected path ${file} to be rooted in ${ROOT_TS_PATH}`);
             }
-            // Trim leading ROOT_TS_PATH and extension, switch to web path seperators
+            // Trim leading ROOT_TS_PATH and file extension, ensure "/" path seperators
             var importpath = file.substring(ROOT_TS_PATH.length + 1, file.length - path.extname(file).length).replace(/\\/g, '/');
             console.log(`Found '${importpath}'`)
             return importpath;
@@ -78,25 +78,27 @@ var entryPoints =
 
 console.log('Starting optimization');
 
-var builder = new Builder('./wwwroot/js', './wwwroot/_jspm.config.js');
+// NOTE: SystemJS loads compiled JavaScript directly
+var sourceRootPath = './wwwroot/js';
+var systemJsConfigPath = './wwwroot/_jspm.config.js';
 
-// Trace the entrypoints individually and then patch their names so
-// that we can load them from the web page
+var builder = new Builder(sourceRootPath, systemJsConfigPath);
+
+// Trace each potential entrypoint module to build its dependency tree.
 Promise.all(entryPoints.map(moduleName => builder.trace(moduleName)))
-    // Collapse all modules into a single tree
+    // Collapse all dependency trees into a single tree
     .then(trees => trees.reduce((left, right) => builder.addTrees(left, right)))
     // Re-write app module names to remove .js extension added by trace.
     .then(tree => {
         /* 
-            When the SystemJS-Builder trace function locates our modules
+            When the SystemJS-Builder trace function locates our entrypoint modules
             it appends '.js' to the module name (as that is the name of the file on disk).
 
             We need to trim this extension from the module names so that we can load the modules
             directly using `System.import('module/name')` in the browser, as it works in Dev mode.
 
             TODO: Can we use _jspm.config.js to make this mapping explicit?
-            Not sure how to do so without require ALL loose app modules to be added to the config
-            explicitly.
+            Not sure how to do so without require ALL loose app modules to be added to the config explicitly.
         */
         entryPoints.forEach(moduleName => {
             var jsModuleName = `${moduleName}.js`;
@@ -106,6 +108,7 @@ Promise.all(entryPoints.map(moduleName => builder.trace(moduleName)))
                 throw new Error(`Unable to find expected module name ${jsModuleName} in module tree!`);
             }
             // Rename the module in the tree
+            // NOTE: This appears to be all that is needed. No need to change the key in the `tree` object/dictionary.
             mod.name = moduleName;
         });
         return tree;
